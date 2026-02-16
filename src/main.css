@@ -1,0 +1,47 @@
+
+:root {
+  --primary-bg: #101010;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background: var(--primary-bg);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  height: 100dvh;
+  width: 100dvw;
+}
+
+#app-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+#main-board {
+  height: fit-content;
+  width: fit-content;
+  border: 2px solid white;
+  margin: auto;
+  display: grid;
+}
+
+.inner-box {
+  display: grid;
+  border: 1.5px solid #acacac;
+}
+
+.box-entry {
+  min-height: 40px;
+  min-width: 40px;
+  border: 1px solid grey;
+  background: transparent;
+}
