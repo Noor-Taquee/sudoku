@@ -1,30 +1,11 @@
-import { createElement } from "./utils/UI/create-dom.js";
-const app = document.getElementById("app");
-const appWrapper = createElement("div", { id: "app-wrapper" });
-app.appendChild(appWrapper);
-const mainBoard = createElement("div", { id: "main-board" });
-appWrapper.appendChild(mainBoard);
-function createBox(boxes, entries) {
-    mainBoard.style.gridTemplateColumns = `repeat(${boxes}, 1fr)`;
-    mainBoard.style.gridTemplateRows = `repeat(${boxes}, 1fr)`;
-    for (let i = 1; i <= boxes; i++) {
-        for (let j = 1; j <= boxes; j++) {
-            const box = createElement("div", { className: "inner-box" });
-            box.style.gridTemplateColumns = `repeat(${entries}, 1fr)`;
-            box.style.gridTemplateRows = `repeat(${entries}, 1fr)`;
-            box.style.gridRow = `${i}`;
-            box.style.gridColumn = `${j}`;
-            mainBoard.appendChild(box);
-            for (let i = 1; i <= entries; i++) {
-                for (let i = 1; i <= entries; i++) {
-                    const entry = createElement("span", {
-                        className: "box-entry"
-                    });
-                    box.appendChild(entry);
-                }
-            }
-        }
-    }
-}
-createBox(2, 3);
+import "./router.js";
+import { tabContainer } from "./app.js";
+import { homePanel } from "./home/home-panel.js";
+import { playingPanel } from "./playing-panel/playing-panel.js";
+import { customPanel } from "./custom/custom-panel.js";
+import { settingsPanel } from "./settings/settings-panel.js";
+tabContainer.append(customPanel, homePanel, playingPanel, settingsPanel);
+document.addEventListener("DOMContentLoaded", () => {
+    window.location.hash ?? "#home";
+});
 //# sourceMappingURL=main.js.map
