@@ -15,28 +15,29 @@ function handleRouting() {
     const hashParts = window.location.hash.split('&');
     const hash = hashParts[0];
     const targetPanel = routes[hash] || homePanel;
-    targetPanel.scrollIntoView({ behavior: "auto" });
+    targetPanel.scrollIntoView({ behavior: "smooth" });
     if (targetPanel == playingPanel) {
+        let infoPresent = false;
         let puzzle;
-        let solution;
         let difficulty;
         for (let part of hashParts) {
             const [key, value] = part.split("=");
             if (key == "puzzle") {
                 puzzle = value;
-            }
-            else if (key == "solution") {
-                solution = value;
+                infoPresent = true;
             }
             else if (key == "difficulty") {
                 difficulty = value;
+                infoPresent = true;
             }
         }
         if (!puzzle) {
-            window.location.hash = "#home";
+            if (infoPresent) {
+                window.location.hash = "#home";
+            }
             return;
         }
-        solution = solveSudoku(puzzle);
+        const solution = solveSudoku(puzzle);
         if (!solution) {
             document.dispatchEvent(new CustomEvent("show-board-error", { detail: {
                     message: "The puzzle is not valid.",

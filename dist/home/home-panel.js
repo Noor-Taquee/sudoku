@@ -1,3 +1,4 @@
+import { prepareBoard } from "../playing-panel/playing-panel.js";
 import { createElement } from "../utils/create-dom.js";
 export const homePanel = createElement("div", {
     id: "home-panel",
@@ -38,9 +39,12 @@ async function fetchPuzzle() {
         const response = await fetch("https://sudoku-api.vercel.app/api/dosuku");
         const data = await response.json();
         const source = data.newboard.grids[0];
+        if (!source) {
+            document.dispatchEvent(new CustomEvent("show-board-error"));
+            return;
+        }
         const sourcePuzzle = source.value.flat().join("");
-        const sourceSolution = source.solution.flat().join("");
-        window.location.hash = `#playing&puzzle=${sourcePuzzle}&solution=${sourceSolution}&difficulty=${source.difficulty}`;
+        window.location.hash = `#playing&puzzle=${sourcePuzzle}&difficulty=${source.difficulty}`;
     }
     catch {
         document.dispatchEvent(new CustomEvent("show-board-error"));

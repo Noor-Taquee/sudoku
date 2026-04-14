@@ -188,11 +188,12 @@ content.append( boardContainer, infoDiv, startBtn );
 playingPanel.append( topBar, content );
 
 // MARK: Prepare Board
-document.addEventListener("prepare-board", () => {
-  window.location.hash = "#playing";
-  document.dispatchEvent( new Event("clear-board") );
+export function prepareBoard() {
+  clearBoard();
+  if (!window.location.hash.startsWith("#playing")) {
+    window.location.hash = "#playing";
+  }
   
-
   boardContainer.classList.add("scan-loading");
   difficultyValue.classList.add("scan-loading");
   startBtn.innerHTML = "";
@@ -200,11 +201,12 @@ document.addEventListener("prepare-board", () => {
     createElement("i", { className: "ph-bold ph-circle-notch spin" }),
     createElement("p", { textContent: "loading" }),
   );
-});
+}
+document.addEventListener("prepare-board", prepareBoard);
 
 // MARK: Start New Game
-document.addEventListener("render-board", () => {
-  document.dispatchEvent( new Event("clear-board") );
+export function renderBoard() {
+  clearBoard();
   
   boardContainer.classList.remove("scan-loading");
   difficultyValue.classList.remove("scan-loading");
@@ -216,10 +218,11 @@ document.addEventListener("render-board", () => {
   boardContainer.appendChild( createBoard()! );
   difficultyValue.textContent = gameState.boardState?.difficulty!;
   calculateProgress();
-});
+}
+document.addEventListener("render-board", renderBoard);
 
 // MARK: Clear Board
-document.addEventListener("clear-board", () => {
+export function clearBoard() {
   boardContainer.classList.remove("load-error");
   resetTimer();
   if (content.contains(numpad)) {
@@ -228,13 +231,15 @@ document.addEventListener("clear-board", () => {
   difficultyValue.textContent = "";
   boardContainer.innerHTML = "";
   setProgress(0);
-});
+}
+document.addEventListener("clear-board", clearBoard);
 
 // MARK: Reset Board
-document.addEventListener("reset-board", () => {
-  document.dispatchEvent( new Event("clear-board") );
-  document.dispatchEvent( new Event("render-board") );
-});
+export function resetBoard() {
+  clearBoard();
+  renderBoard();
+}
+document.addEventListener("reset-board", resetBoard);
 
 // MARK: Show Error
 document.addEventListener("show-board-error", () => {
