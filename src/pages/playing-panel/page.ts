@@ -1,16 +1,17 @@
-import { createElement } from "../utils/create-dom.js";
+import { createElement } from "../../utils/create-dom.js";
 
-import { numpad } from "../components/numpad/numpad.js";
-import { calculateProgress, createBoard, gameState, showBoard } from "../core/sudoku.js";
+import { numpad } from "../../components/numpad/numpad.js";
+import { calculateProgress, createSourceBoard, createBoard, gameState, showBoard } from "../../core/sudoku.js";
+import { solveSudoku } from "../../services/solver.js";
 
 export const playingPanel = createElement("div", {
   id: "playing-panel",
   className: "app-panel",
 });
 
-//#region Top Bar
-const topBar = createElement("div", {
-  className: "top-bar",
+//#region panel Bar
+const panelBar = createElement("div", {
+  className: "panel-bar",
 });
 
 const panelNameDiv = createElement("div", {
@@ -98,11 +99,11 @@ function stopTimer() {
 document.addEventListener("game-started", startTimer);
 //#endregion Timer
 
-topBar.append( panelNameDiv, timerDiv );
-//#endregion Top Bar
+panelBar.append( panelNameDiv, timerDiv );
+//#endregion panel Bar
 
-//#region Content
-const content = createElement("div", {
+//#region content
+const contentDiv = createElement("div", {
   className: "content-div",
 });
 
@@ -172,7 +173,7 @@ const startBtn = createElement("button", {
 
 startBtn.addEventListener("click", (e) => {
   if (!showBoard()) return;
-  content.replaceChild( numpad, startBtn );
+  contentDiv.replaceChild( numpad, startBtn );
 
   requestAnimationFrame(() => {
     numpad.classList.add("anim-slide-in-bottom");
@@ -183,9 +184,10 @@ startBtn.addEventListener("click", (e) => {
 
 });
 
-content.append( boardContainer, infoDiv, startBtn );
-//#endregion Content
-playingPanel.append( topBar, content );
+contentDiv.append( boardContainer, infoDiv, startBtn );
+//#endregion content
+
+playingPanel.append( panelBar, contentDiv );
 
 // MARK: Prepare Board
 export function prepareBoard() {
@@ -225,8 +227,8 @@ document.addEventListener("render-board", renderBoard);
 export function clearBoard() {
   boardContainer.classList.remove("load-error");
   resetTimer();
-  if (content.contains(numpad)) {
-    content.replaceChild( startBtn, numpad );
+  if (contentDiv.contains(numpad)) {
+    contentDiv.replaceChild( startBtn, numpad );
   }
   difficultyValue.textContent = "";
   boardContainer.innerHTML = "";
@@ -265,3 +267,50 @@ document.addEventListener("show-board-error", () => {
   }, { once: true } );
   
 });
+
+//#region hashHandler
+export function hashHandler(attr: string[]) {
+  let infoPresent = false;
+  
+  let puzzle;
+  let difficulty;
+  
+  attr.forEach(part => {
+    const [key, value] = part.split("=");
+    if (key == "puzzle") {
+      puzzle = value;
+      infoPresent = true;
+    } else if (key == "difficulty") {
+      difficulty = value;
+      infoPresent = true;
+    }
+  });
+  
+  if (!puzzle) {
+    if (infoPresent) {
+      window.location.hash = "#home";
+    }
+    return;
+  }
+  
+  const solution = solveSudoku(puzzle);
+  if (!solution) {
+    document.dispatchEvent( new CustomEvent("show-board-error", { detail: {
+      message: "The puzzle is not valid.",
+      retry: false,
+    } }) );
+    return;
+  }
+  difficulty = difficulty ? difficulty : "custom";
+  
+  gameState.boardState = {
+    puzzle: createSourceBoard(puzzle),
+    solution: createSourceBoard(solution),
+    currentState: createSourceBoard(puzzle),
+    difficulty: difficulty,
+    mistakes: 0,
+    history: []
+  }
+  document.dispatchEvent( new Event("render-board") );
+}
+//#endregion hashHandler

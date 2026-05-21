@@ -1,14 +1,14 @@
-import { prepareBoard } from "../playing-panel/playing-panel.js";
-import { createElement } from "../utils/create-dom.js";
+import { prepareBoard } from "../playing-panel/page.js";
+import { createElement } from "../../utils/create-dom.js";
 
 export const homePanel = createElement("div", {
   id: "home-panel",
   className: "app-panel",
 });
 
-//#region Top bar
-const topBar = createElement("div", {
-  className: "top-bar",
+//#region panel bar
+const panelBar = createElement("div", {
+  className: "panel-bar",
 });
 
 const gameName = createElement("p", {
@@ -24,11 +24,11 @@ const accountBtn = createElement("button", {
   createElement("i", { className: "ph-bold ph-user" })
 ])
 
-topBar.append( gameName, accountBtn );
-//#endregion Top bar
+panelBar.append( gameName, accountBtn );
+//#endregion panel bar
 
-//#region Content
-const content = createElement("div", {
+//#region content
+const contentDiv = createElement("div", {
   className: "content-div",
 });
 
@@ -86,18 +86,18 @@ customBtn.addEventListener("click", () => {
   window.location.hash = "#custom";
 });
 
-// const settingsBtn = createElement("button", {
-//   id: "settings-btn",
-//   className: "action-btn",
-// }, [
-//   createElement("i", { className: "ph-fill ph-gear" }),
-//   createElement("p", { textContent: "Settings" }),
-// ]);
-// settingsBtn.addEventListener("click", () => {
-//   window.location.hash = "#settings";
-// });
+const settingsBtn = createElement("button", {
+  id: "settings-btn",
+  className: "action-btn",
+}, [
+  createElement("i", { className: "ph-fill ph-gear" }),
+  createElement("p", { textContent: "Settings" }),
+]);
+settingsBtn.addEventListener("click", () => {
+  window.location.hash = "#settings";
+});
 
-content.append( playBtn, customBtn/*, settingsBtn*/ );
-//#endregion Content
+contentDiv.append( playBtn, customBtn );
+//#endregion content
 
-homePanel.append( topBar, content );
+homePanel.append( panelBar, contentDiv );

@@ -1,16 +1,16 @@
-import { createElement } from "../utils/create-dom.js";
-import { modifyInputDiv } from "../utils/UI/input.js";
+import { createElement } from "../../utils/create-dom.js";
+import { modifyInputDiv } from "../../utils/UI/input.js";
 
-import { createSourceBoard, gameState } from "../core/sudoku.js";
+import { createSourceBoard, gameState } from "../../core/sudoku.js";
 
 export const customPanel = createElement("div", {
   id: "custom-panel",
   className: "app-panel",
 });
 
-//#region Top Bar
-const topBar = createElement("div", {
-  className: "top-bar",
+//#region panel Bar
+const panelBar = createElement("div", {
+  className: "panel-bar",
 });
 
 const panelNameDiv = createElement("div", {
@@ -39,11 +39,11 @@ const helpBtn = createElement("button", {
   createElement("i", { className: "ph-bold ph-question-mark" })
 ]);
 
-topBar.append( panelNameDiv, helpBtn );
-//#endregion Top Bar
+panelBar.append( panelNameDiv, helpBtn );
+//#endregion panel Bar
 
-//#region Content
-const content = createElement("div", {
+//#region content
+const contentDiv = createElement("div", {
   className: "content-div",
   id: "source-input-div",
 });
@@ -99,7 +99,7 @@ createBtn.addEventListener("click", () => {
   document.dispatchEvent( new CustomEvent("render-board") );
 });
 
-content.append( sourceInputDiv, createBtn );
-//#endregion Content
+contentDiv.append( sourceInputDiv, createBtn );
+//#endregion content
 
-customPanel.append( topBar, content );
+customPanel.append( panelBar, contentDiv );
