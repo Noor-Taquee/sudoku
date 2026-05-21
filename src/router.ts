@@ -1,85 +1,84 @@
 
 import { homePanel } from "./pages/home-panel/page.js";
 
-import { playingPanel } from "./pages/playing-panel/page.js";
+import { hashHandler as practicalHH, playingPanel } from "./pages/playing-panel/page.js";
 
 import { customPanel } from "./pages/custom-panel/page.js";
 
 import { settingsPanel } from "./pages/settings-panel/page.js";
+import { panelContainer } from "./app.js";
 
-import { createSourceBoard, gameState } from "./core/sudoku.js";
-import { solveSudoku } from "./services/solver.js";
+type HashHandler = (attr: string[]) => void;
+type Route = Record<string, [HTMLDivElement, Route?, HashHandler?]>;
 
-const routes: Record<string, HTMLDivElement> = {
-  "": homePanel,
-  "#home": homePanel,
-  "#playing": playingPanel,
-  "#custom": customPanel,
-  "#settings": settingsPanel,
+const mainRoute: Route = {
+  "": [homePanel],
+  "#home": [homePanel],
+  "#playing": [playingPanel,, practicalHH],
+  "#custom": [customPanel],
+  "#settings": [settingsPanel],
 };
 
-function handleRouting() {
-  const hashParts = window.location.hash.split('&');
-  const hash = hashParts[0]!;
-  
-  const targetPanel = routes[hash] || homePanel;
-  targetPanel.scrollIntoView({ behavior: "smooth" });
-  
-  if (targetPanel == playingPanel) {
-    let infoPresent = false;
+function defaultHash() { window.location.hash = "#home";}
 
-    let puzzle;
-    let difficulty;
-    
-    for (let part of hashParts) {
-      const [key, value] = part.split("=");
-      if (key == "puzzle") {
-        puzzle = value;
-        infoPresent = true;
-      } else if (key == "difficulty") {
-        difficulty = value;
-        infoPresent = true;
-      }
-    }
+function handle() {
+  const hashParts = window.location.hash.split("&");
+  
+  const locationHash = hashParts[0] ?? "";
+  const attributesHash = hashParts.slice(1);
+  
+  const hashHandler: HashHandler|undefined = handleLocaton( locationHash );
+  if (!hashHandler) return;
+  
+  if (attributesHash.length >= 1)
+  hashHandler( attributesHash );
+}
 
-    if (!puzzle) {
-      if (infoPresent) {
-        window.location.hash = "#home";
-      }
-      return;
-    }
-    
-    const solution = solveSudoku(puzzle);
-    if (!solution) {
-      document.dispatchEvent( new CustomEvent("show-board-error", { detail: {
-        message: "The puzzle is not valid.",
-        retry: false,
-      } }) );
-      return;
-    }
-    difficulty = difficulty ? difficulty : "custom";
-    
-    gameState.boardState = {
-      puzzle: createSourceBoard(puzzle),
-      solution: createSourceBoard(solution),
-      currentState: createSourceBoard(puzzle),
-      difficulty: difficulty,
-      mistakes: 0,
-      history: []
-    }
-    document.dispatchEvent( new Event("render-board") );
+function handleLocaton(locationString: string) {
+  let hashHandler: undefined|HashHandler;
+  
+  if (!locationString) {
+    defaultHash();
+    return;
   }
 
-
-  const mainContainer = document.getElementById("main-app-container");
+  const locationStack = locationString?.split("/");
+  let parentRoute: Route|undefined = mainRoute;
   
-  if (!mainContainer) return;
+  locationStack.forEach((path, index) => {
+    if (!parentRoute) return;
+    
+    const lce = parentRoute[path];
+    if (!lce) {
+      defaultHash();
+      return;
+    }
 
-  mainContainer.innerHTML = "";
-  mainContainer.appendChild(targetPanel);
+    parentRoute = lce[1];
+    const currentPanel = lce[0];
+    
+    if (index == 0) { hashHandler = lce[2]; }
+
+    if (index == locationStack.length - 1) {
+      showPanel(currentPanel);
+    }
+  });
+
+  return hashHandler;
+}
+
+function showPanel(
+  newPanel: HTMLDivElement,
+  animation = true,
+) {
+  if (panelContainer.firstChild)
+  panelContainer.removeChild(panelContainer.firstChild);
+  panelContainer.appendChild(newPanel);
+  if (animation) return;
 }
 
 
-window.addEventListener("hashchange", handleRouting);
 
-window.addEventListener("load", handleRouting);
+window.addEventListener("hashchange", handle);
+
+window.addEventListener("load", handle);

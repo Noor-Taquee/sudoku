@@ -1,16 +1,17 @@
 import { createElement } from "../../utils/create-dom.js";
 
 import { numpad } from "../../components/numpad/numpad.js";
-import { calculateProgress, createBoard, gameState, showBoard } from "../../core/sudoku.js";
+import { calculateProgress, createSourceBoard, createBoard, gameState, showBoard } from "../../core/sudoku.js";
+import { solveSudoku } from "../../services/solver.js";
 
 export const playingPanel = createElement("div", {
   id: "playing-panel",
   className: "app-panel",
 });
 
-//#region Top Bar
+//#region panel Bar
 const panelBar = createElement("div", {
-  className: "top-bar",
+  className: "panel-bar",
 });
 
 const panelNameDiv = createElement("div", {
@@ -99,9 +100,9 @@ document.addEventListener("game-started", startTimer);
 //#endregion Timer
 
 panelBar.append( panelNameDiv, timerDiv );
-//#endregion Top Bar
+//#endregion panel Bar
 
-//#region Content
+//#region content
 const contentDiv = createElement("div", {
   className: "content-div",
 });
@@ -184,7 +185,8 @@ startBtn.addEventListener("click", (e) => {
 });
 
 contentDiv.append( boardContainer, infoDiv, startBtn );
-//#endregion Content
+//#endregion content
+
 playingPanel.append( panelBar, contentDiv );
 
 // MARK: Prepare Board
@@ -265,3 +267,50 @@ document.addEventListener("show-board-error", () => {
   }, { once: true } );
   
 });
+
+//#region hashHandler
+export function hashHandler(attr: string[]) {
+  let infoPresent = false;
+  
+  let puzzle;
+  let difficulty;
+  
+  attr.forEach(part => {
+    const [key, value] = part.split("=");
+    if (key == "puzzle") {
+      puzzle = value;
+      infoPresent = true;
+    } else if (key == "difficulty") {
+      difficulty = value;
+      infoPresent = true;
+    }
+  });
+  
+  if (!puzzle) {
+    if (infoPresent) {
+      window.location.hash = "#home";
+    }
+    return;
+  }
+  
+  const solution = solveSudoku(puzzle);
+  if (!solution) {
+    document.dispatchEvent( new CustomEvent("show-board-error", { detail: {
+      message: "The puzzle is not valid.",
+      retry: false,
+    } }) );
+    return;
+  }
+  difficulty = difficulty ? difficulty : "custom";
+  
+  gameState.boardState = {
+    puzzle: createSourceBoard(puzzle),
+    solution: createSourceBoard(solution),
+    currentState: createSourceBoard(puzzle),
+    difficulty: difficulty,
+    mistakes: 0,
+    history: []
+  }
+  document.dispatchEvent( new Event("render-board") );
+}
+//#endregion hashHandler

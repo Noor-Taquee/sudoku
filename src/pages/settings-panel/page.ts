@@ -5,8 +5,8 @@ export const settingsPanel = createElement("div", {
   className: "app-panel",
 });
 
-//#region Top Bar
-const topBar = createElement("div", {
+//#region panel Bar
+const panelBar = createElement("div", {
   className: "top-bar",
 });
 
@@ -29,18 +29,18 @@ backBtn.addEventListener("click", () => {
   window.location.hash = "#home";
 });
 
-topBar.append( panelNameDiv );
-//#endregion Top Bar
+panelBar.append( panelNameDiv );
+//#endregion panel Bar
 
 //#region content
-const content = createElement("div", { className: "content-div" });
+const contentDiv = createElement("div", { className: "content-div" });
 
 const appearanceSection = createElement("div", {
   id: "appearance-section",
   className: "settings-section",
 });
 
-content.append( appearanceSection );
+contentDiv.append( appearanceSection );
 //#endregion content
 
-settingsPanel.append( topBar, content );
+settingsPanel.append( panelBar, contentDiv );

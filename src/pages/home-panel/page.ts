@@ -6,9 +6,9 @@ export const homePanel = createElement("div", {
   className: "app-panel",
 });
 
-//#region Top bar
-const topBar = createElement("div", {
-  className: "top-bar",
+//#region panel bar
+const panelBar = createElement("div", {
+  className: "panel-bar",
 });
 
 const gameName = createElement("p", {
@@ -24,11 +24,11 @@ const accountBtn = createElement("button", {
   createElement("i", { className: "ph-bold ph-user" })
 ])
 
-topBar.append( gameName, accountBtn );
-//#endregion Top bar
+panelBar.append( gameName, accountBtn );
+//#endregion panel bar
 
-//#region Content
-const content = createElement("div", {
+//#region content
+const contentDiv = createElement("div", {
   className: "content-div",
 });
 
@@ -97,7 +97,7 @@ settingsBtn.addEventListener("click", () => {
   window.location.hash = "#settings";
 });
 
-content.append( playBtn, customBtn );
-//#endregion Content
+contentDiv.append( playBtn, customBtn );
+//#endregion content
 
-homePanel.append( topBar, content );
+homePanel.append( panelBar, contentDiv );
