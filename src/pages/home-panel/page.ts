@@ -1,5 +1,5 @@
-import { prepareBoard } from "../playing-panel/playing-panel.js";
-import { createElement } from "../utils/create-dom.js";
+import { prepareBoard } from "../playing-panel/page.js";
+import { createElement } from "../../utils/create-dom.js";
 
 export const homePanel = createElement("div", {
   id: "home-panel",
@@ -86,18 +86,18 @@ customBtn.addEventListener("click", () => {
   window.location.hash = "#custom";
 });
 
-// const settingsBtn = createElement("button", {
-//   id: "settings-btn",
-//   className: "action-btn",
-// }, [
-//   createElement("i", { className: "ph-fill ph-gear" }),
-//   createElement("p", { textContent: "Settings" }),
-// ]);
-// settingsBtn.addEventListener("click", () => {
-//   window.location.hash = "#settings";
-// });
+const settingsBtn = createElement("button", {
+  id: "settings-btn",
+  className: "action-btn",
+}, [
+  createElement("i", { className: "ph-fill ph-gear" }),
+  createElement("p", { textContent: "Settings" }),
+]);
+settingsBtn.addEventListener("click", () => {
+  window.location.hash = "#settings";
+});
 
-content.append( playBtn, customBtn/*, settingsBtn*/ );
+content.append( playBtn, customBtn );
 //#endregion Content
 
 homePanel.append( topBar, content );

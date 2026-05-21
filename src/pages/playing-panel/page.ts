@@ -1,7 +1,7 @@
-import { createElement } from "../utils/create-dom.js";
+import { createElement } from "../../utils/create-dom.js";
 
-import { numpad } from "../components/numpad/numpad.js";
-import { calculateProgress, createBoard, gameState, showBoard } from "../core/sudoku.js";
+import { numpad } from "../../components/numpad/numpad.js";
+import { calculateProgress, createBoard, gameState, showBoard } from "../../core/sudoku.js";
 
 export const playingPanel = createElement("div", {
   id: "playing-panel",
@@ -9,7 +9,7 @@ export const playingPanel = createElement("div", {
 });
 
 //#region Top Bar
-const topBar = createElement("div", {
+const panelBar = createElement("div", {
   className: "top-bar",
 });
 
@@ -98,11 +98,11 @@ function stopTimer() {
 document.addEventListener("game-started", startTimer);
 //#endregion Timer
 
-topBar.append( panelNameDiv, timerDiv );
+panelBar.append( panelNameDiv, timerDiv );
 //#endregion Top Bar
 
 //#region Content
-const content = createElement("div", {
+const contentDiv = createElement("div", {
   className: "content-div",
 });
 
@@ -172,7 +172,7 @@ const startBtn = createElement("button", {
 
 startBtn.addEventListener("click", (e) => {
   if (!showBoard()) return;
-  content.replaceChild( numpad, startBtn );
+  contentDiv.replaceChild( numpad, startBtn );
 
   requestAnimationFrame(() => {
     numpad.classList.add("anim-slide-in-bottom");
@@ -183,9 +183,9 @@ startBtn.addEventListener("click", (e) => {
 
 });
 
-content.append( boardContainer, infoDiv, startBtn );
+contentDiv.append( boardContainer, infoDiv, startBtn );
 //#endregion Content
-playingPanel.append( topBar, content );
+playingPanel.append( panelBar, contentDiv );
 
 // MARK: Prepare Board
 export function prepareBoard() {
@@ -225,8 +225,8 @@ document.addEventListener("render-board", renderBoard);
 export function clearBoard() {
   boardContainer.classList.remove("load-error");
   resetTimer();
-  if (content.contains(numpad)) {
-    content.replaceChild( startBtn, numpad );
+  if (contentDiv.contains(numpad)) {
+    contentDiv.replaceChild( startBtn, numpad );
   }
   difficultyValue.textContent = "";
   boardContainer.innerHTML = "";

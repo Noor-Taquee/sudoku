@@ -1,10 +1,14 @@
 
-import { homePanel } from "./home/home-panel.js";
-import { playingPanel } from "./playing-panel/playing-panel.js";
-import { customPanel } from "./custom/custom-panel.js";
-import { settingsPanel } from "./settings/settings-panel.js";
+import { homePanel } from "./pages/home-panel/page.js";
+
+import { playingPanel } from "./pages/playing-panel/page.js";
+
+import { customPanel } from "./pages/custom-panel/page.js";
+
+import { settingsPanel } from "./pages/settings-panel/page.js";
+
 import { createSourceBoard, gameState } from "./core/sudoku.js";
-import { solveSudoku } from "./utils/solver.js";
+import { solveSudoku } from "./services/solver.js";
 
 const routes: Record<string, HTMLDivElement> = {
   "": homePanel,

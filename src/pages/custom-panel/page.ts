@@ -1,7 +1,7 @@
-import { createElement } from "../utils/create-dom.js";
-import { modifyInputDiv } from "../utils/UI/input.js";
+import { createElement } from "../../utils/create-dom.js";
+import { modifyInputDiv } from "../../utils/UI/input.js";
 
-import { createSourceBoard, gameState } from "../core/sudoku.js";
+import { createSourceBoard, gameState } from "../../core/sudoku.js";
 
 export const customPanel = createElement("div", {
   id: "custom-panel",

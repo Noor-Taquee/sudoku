@@ -1,4 +1,4 @@
-import { createElement } from "../utils/create-dom.js";
+import { createElement } from "../../utils/create-dom.js";
 
 export const settingsPanel = createElement("div", {
   id: "settings-panel",
