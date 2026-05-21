@@ -22,12 +22,15 @@ jobs:
       - name: Install & Build
         run: |
           npm install
-          npx tsc 
+          npm run build 
+          mkdir -p deploy
+          cp index.html deploy/
+          cp -r dist deploy/
+          cp -r public deploy/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ 
-          keep_files: true
-          exclude_assets: '.gitignore, src, node_modules'
+          publish_dir: ./deploy
+          force_orphan: true
