@@ -1,5 +1,6 @@
-import { createElement } from "../../utils/create-dom.js";
+import "./numpad.css";
 
+import { createElement } from "../../utils/create-dom.js";
 
 export const numpad = createElement("div", {
   id: "numpad"

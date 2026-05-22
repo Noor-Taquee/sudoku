@@ -1,4 +1,5 @@
-import { prepareBoard } from "../playing-panel/page.js";
+import "./home-panel.css";
+
 import { createElement } from "../../utils/create-dom.js";
 
 export const homePanel = createElement("div", {

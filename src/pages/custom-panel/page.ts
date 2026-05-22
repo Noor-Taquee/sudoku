@@ -1,3 +1,5 @@
+import "./custom-panel.css";
+
 import { createElement } from "../../utils/create-dom.js";
 import { modifyInputDiv } from "../../utils/UI/input.js";
 

@@ -1,3 +1,5 @@
+import "./index.css";
+
 import "./router.js";
 
 document.addEventListener("DOMContentLoaded", () => {

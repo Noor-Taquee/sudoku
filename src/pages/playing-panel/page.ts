@@ -1,3 +1,5 @@
+import "./playing-panel.css";
+
 import { createElement } from "../../utils/create-dom.js";
 
 import { numpad } from "../../components/numpad/numpad.js";
