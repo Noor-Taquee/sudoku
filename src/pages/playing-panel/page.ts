@@ -3,7 +3,13 @@ import "./playing-panel.css";
 import { createElement } from "../../utils/create-dom.js";
 
 import { numpad } from "../../components/numpad/numpad.js";
-import { calculateProgress, createSourceBoard, createBoard, gameState, showBoard } from "../../core/sudoku.js";
+import {
+  calculateProgress,
+  createSourceBoard,
+  createBoard,
+  gameState,
+  showBoard,
+} from "../../core/sudoku.js";
 import { solveSudoku } from "../../services/solver.js";
 
 export const playingPanel = createElement("div", {
@@ -19,17 +25,19 @@ const panelBar = createElement("div", {
 const panelNameDiv = createElement("div", {
   className: "panel-name-div",
 });
-  const backBtn = createElement("button", {
+const backBtn = createElement(
+  "button",
+  {
     title: "Back",
     className: "toggle-btn",
-  }, [
-    createElement("i", { className: "ph-bold ph-caret-left" })
-  ]);
-  const gameName = createElement("p", {
-    className: "panel-name",
-    textContent: "sudoku"
-  });
-panelNameDiv.append( backBtn, gameName );
+  },
+  [createElement("i", { className: "ph-bold ph-caret-left" })],
+);
+const gameName = createElement("p", {
+  className: "panel-name",
+  textContent: "sudoku",
+});
+panelNameDiv.append(backBtn, gameName);
 
 backBtn.addEventListener("click", () => {
   window.location.hash = "#home";
@@ -63,7 +71,7 @@ const timerIcon = createElement("i", {
   className: "ph-bold ph-timer",
 });
 
-timerDiv.append( timeP, timerIcon );
+timerDiv.append(timeP, timerIcon);
 
 //#region Timer
 let startTime: number;
@@ -86,8 +94,8 @@ function startTimer() {
     const minutes = Math.floor(elapsed / 60000);
     const seconds = Math.floor((elapsed % 60000) / 1000);
     const tenths = Math.floor((elapsed % 1000) / 100);
-    
-    timeP.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}.${tenths}`;
+
+    timeP.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}.${tenths}`;
     // minuteP.textContent = String(minutes);
     // secondP.textContent = seconds.toString().padStart(2, '0');
     // milliSecondP.textContent = String(tenths);
@@ -101,7 +109,7 @@ function stopTimer() {
 document.addEventListener("game-started", startTimer);
 //#endregion Timer
 
-panelBar.append( panelNameDiv, timerDiv );
+panelBar.append(panelNameDiv, timerDiv);
 //#endregion panel Bar
 
 //#region content
@@ -121,13 +129,13 @@ const difficultyTextDiv = createElement("div", {
 });
 const difficultyKey = createElement("span", {
   className: "info key",
-  textContent: "Difficulty: "
+  textContent: "Difficulty: ",
 });
 const difficultyValue = createElement("span", {
   className: "info value",
   textContent: "",
 });
-difficultyTextDiv.append( difficultyKey, difficultyValue );
+difficultyTextDiv.append(difficultyKey, difficultyValue);
 
 const progressDiv = createElement("div", {
   className: "content",
@@ -136,26 +144,28 @@ const progressHeaderDiv = createElement("div", {
   className: "top-bar",
 });
 progressHeaderDiv.style.padding = String(0);
-  const progressHeaderText = createElement("p", {
-    className: "header-text info",
-    textContent: "Boxes filled",
-  });
-  const progressNumber = createElement("p", {
-    className: "progress-number info",
-    textContent: "0/81",
-  });
-progressHeaderDiv.append(  progressHeaderText, progressNumber );
+const progressHeaderText = createElement("p", {
+  className: "header-text info",
+  textContent: "Boxes filled",
+});
+const progressNumber = createElement("p", {
+  className: "progress-number info",
+  textContent: "0/81",
+});
+progressHeaderDiv.append(progressHeaderText, progressNumber);
 
-const progressBar = createElement("div", {
-  className: "progress",
-}, [
-  createElement("div", { className: "progress-fill" })
-]);
+const progressBar = createElement(
+  "div",
+  {
+    className: "progress",
+  },
+  [createElement("div", { className: "progress-fill" })],
+);
 
-progressDiv.append( progressHeaderDiv, progressBar );
+progressDiv.append(progressHeaderDiv, progressBar);
 
-function setProgress( value: number, max = 81) {
-  progressBar.style.setProperty("--value", `${value*100/max}%`);
+function setProgress(value: number, max = 81) {
+  progressBar.style.setProperty("--value", `${(value * 100) / max}%`);
   progressNumber.textContent = `${value}/${max}`;
 }
 
@@ -163,33 +173,40 @@ document.addEventListener("game-progress", (e) => {
   setProgress((e as CustomEvent).detail.progress);
 });
 
-infoDiv.append( difficultyTextDiv, progressDiv );
+infoDiv.append(difficultyTextDiv, progressDiv);
 
-const startBtn = createElement("button", {
-  id: "start-btn",
-  className: "action-btn centered",
-}, [
-  createElement("i", { className: "ph-fill ph-play" }),
-  createElement("p", { textContent: "start" }),
-]);
+const startBtn = createElement(
+  "button",
+  {
+    id: "start-btn",
+    className: "action-btn centered",
+  },
+  [
+    createElement("i", { className: "ph-fill ph-play" }),
+    createElement("p", { textContent: "start" }),
+  ],
+);
 
 startBtn.addEventListener("click", (e) => {
   if (!showBoard()) return;
-  contentDiv.replaceChild( numpad, startBtn );
+  contentDiv.replaceChild(numpad, startBtn);
 
   requestAnimationFrame(() => {
     numpad.classList.add("anim-slide-in-bottom");
-    numpad.addEventListener("animationend", () => {
-      numpad.classList.remove("anim-slide-in-bottom");
-    }, { once: true });
+    numpad.addEventListener(
+      "animationend",
+      () => {
+        numpad.classList.remove("anim-slide-in-bottom");
+      },
+      { once: true },
+    );
   });
-
 });
 
-contentDiv.append( boardContainer, infoDiv, startBtn );
+contentDiv.append(boardContainer, infoDiv, startBtn);
 //#endregion content
 
-playingPanel.append( panelBar, contentDiv );
+playingPanel.append(panelBar, contentDiv);
 
 // MARK: Prepare Board
 export function prepareBoard() {
@@ -197,7 +214,7 @@ export function prepareBoard() {
   if (!window.location.hash.startsWith("#playing")) {
     window.location.hash = "#playing";
   }
-  
+
   boardContainer.classList.add("scan-loading");
   difficultyValue.classList.add("scan-loading");
   startBtn.innerHTML = "";
@@ -211,7 +228,7 @@ document.addEventListener("prepare-board", prepareBoard);
 // MARK: Start New Game
 export function renderBoard() {
   clearBoard();
-  
+
   boardContainer.classList.remove("scan-loading");
   difficultyValue.classList.remove("scan-loading");
   startBtn.innerHTML = "";
@@ -219,7 +236,7 @@ export function renderBoard() {
     createElement("i", { className: "ph-fill ph-play" }),
     createElement("p", { textContent: "start" }),
   );
-  boardContainer.appendChild( createBoard()! );
+  boardContainer.appendChild(createBoard()!);
   difficultyValue.textContent = gameState.boardState?.difficulty!;
   calculateProgress();
 }
@@ -230,7 +247,7 @@ export function clearBoard() {
   boardContainer.classList.remove("load-error");
   resetTimer();
   if (contentDiv.contains(numpad)) {
-    contentDiv.replaceChild( startBtn, numpad );
+    contentDiv.replaceChild(startBtn, numpad);
   }
   difficultyValue.textContent = "";
   boardContainer.innerHTML = "";
@@ -250,34 +267,37 @@ document.addEventListener("show-board-error", () => {
   boardContainer.classList.remove("scan-loading");
   boardContainer.classList.add("load-error");
   difficultyValue.classList.remove("scan-loading");
-  
+
   const errorMessage = createElement("p", {
     className: "error-message",
-    textContent: "An error occured!"
+    textContent: "An error occured!",
   });
-  boardContainer.append( errorMessage );
-  
+  boardContainer.append(errorMessage);
+
   startBtn.innerHTML = "";
   startBtn.append(
     createElement("i", { className: "ph-bold ph-arrow-counter-clockwise" }),
     createElement("p", { textContent: "retry" }),
   );
-  startBtn.addEventListener("click", () => {
-     if (!boardContainer.classList.contains("load-error")) return;
-    
-    document.dispatchEvent( new Event("retry-board-api") );
-  }, { once: true } );
-  
+  startBtn.addEventListener(
+    "click",
+    () => {
+      if (!boardContainer.classList.contains("load-error")) return;
+
+      document.dispatchEvent(new Event("retry-board-api"));
+    },
+    { once: true },
+  );
 });
 
 //#region hashHandler
 export function hashHandler(attr: string[]) {
   let infoPresent = false;
-  
+
   let puzzle;
   let difficulty;
-  
-  attr.forEach(part => {
+
+  attr.forEach((part) => {
     const [key, value] = part.split("=");
     if (key == "puzzle") {
       puzzle = value;
@@ -287,32 +307,36 @@ export function hashHandler(attr: string[]) {
       infoPresent = true;
     }
   });
-  
+
   if (!puzzle) {
     if (infoPresent) {
       window.location.hash = "#home";
     }
     return;
   }
-  
+
   const solution = solveSudoku(puzzle);
   if (!solution) {
-    document.dispatchEvent( new CustomEvent("show-board-error", { detail: {
-      message: "The puzzle is not valid.",
-      retry: false,
-    } }) );
+    document.dispatchEvent(
+      new CustomEvent("show-board-error", {
+        detail: {
+          message: "The puzzle is not valid.",
+          retry: false,
+        },
+      }),
+    );
     return;
   }
   difficulty = difficulty ? difficulty : "custom";
-  
+
   gameState.boardState = {
     puzzle: createSourceBoard(puzzle),
     solution: createSourceBoard(solution),
     currentState: createSourceBoard(puzzle),
     difficulty: difficulty,
     mistakes: 0,
-    history: []
-  }
-  document.dispatchEvent( new Event("render-board") );
+    history: [],
+  };
+  document.dispatchEvent(new Event("render-board"));
 }
 //#endregion hashHandler
