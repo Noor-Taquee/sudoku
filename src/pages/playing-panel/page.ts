@@ -264,13 +264,13 @@ document.addEventListener("reset-board", resetBoard);
 
 // MARK: Show Error
 document.addEventListener("show-board-error", () => {
+  difficultyValue.classList.remove("scan-loading");
   boardContainer.classList.remove("scan-loading");
   boardContainer.classList.add("load-error");
-  difficultyValue.classList.remove("scan-loading");
 
   const errorMessage = createElement("p", {
     className: "error-message",
-    textContent: "An error occured!",
+    textContent: "Failed to load",
   });
   boardContainer.append(errorMessage);
 

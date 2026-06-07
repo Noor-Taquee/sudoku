@@ -23,16 +23,16 @@
 }
 
 #board-container {
+  position: relative;
+
   max-height: 70vh;
   width: 90vw;
   aspect-ratio: 1 / 1;
+
   margin: 0 auto;
   border: 2px solid var(--primary-text-color);
 
-  /* background-image: 
-    linear-gradient(var(--secondary-bg) 2px, transparent 2px),
-    linear-gradient(90deg, var(--secondary-bg) 2px, transparent 2px);
-  background-size: 11.111% 11.111%; */
+  display: flex;
 
   &.loading {
     background: linear-gradient(
@@ -45,6 +45,18 @@
     background-position: -200%;
     animation: move-gradient 1s linear infinite;
   }
+
+  &.load-error {
+    --primary-text-color: #cf5454;
+  }
+}
+
+.error-message {
+  height: fit-content;
+  width: fit-content;
+  margin: auto;
+  font: var(--secondary-header-font);
+  color: var(--primary-text-color);
 }
 
 .board {
