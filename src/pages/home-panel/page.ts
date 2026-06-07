@@ -49,11 +49,18 @@ const playBtn = createElement(
 );
 playBtn.addEventListener("click", fetchPuzzle);
 
+export let puzzleFetchController = new AbortController();
+
 async function fetchPuzzle() {
+  puzzleFetchController.abort();
+
+  puzzleFetchController = new AbortController();
   document.dispatchEvent(new Event("prepare-board"));
 
   try {
-    const response = await fetch(dosukuApi);
+    const response = await fetch(dosukuApi, {
+      signal: puzzleFetchController.signal,
+    });
     const data: DosukuData = await response.json();
 
     const source = data.newboard.grids[0];
@@ -65,7 +72,8 @@ async function fetchPuzzle() {
     const sourcePuzzle = source.value.flat().join("");
 
     window.location.hash = `#playing&puzzle=${sourcePuzzle}&difficulty=${source.difficulty}`;
-  } catch {
+  } catch (er: any) {
+    if (er.name == "AbortError") return;
     document.dispatchEvent(new CustomEvent("show-board-error"));
   }
 }
