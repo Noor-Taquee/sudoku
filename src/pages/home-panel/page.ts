@@ -1,6 +1,7 @@
 import "./home-panel.css";
 
 import { createElement } from "../../utils/create-dom.js";
+import { dosukuApi, type DosukuData } from "../../api/dosuku.js";
 
 export const homePanel = createElement("div", {
   id: "home-panel",
@@ -14,18 +15,20 @@ const panelBar = createElement("div", {
 
 const gameName = createElement("p", {
   className: "panel-name",
-  textContent: "sudoku"
+  textContent: "sudoku",
 });
 
-const accountBtn = createElement("button", {
-  title: "Settings",
-  id: "settings-btn",
-  className: "toggle-btn",
-}, [
-  createElement("i", { className: "ph-bold ph-user" })
-])
+const accountBtn = createElement(
+  "button",
+  {
+    title: "Settings",
+    id: "settings-btn",
+    className: "toggle-btn",
+  },
+  [createElement("i", { className: "ph-bold ph-user" })],
+);
 
-panelBar.append( gameName, accountBtn );
+panelBar.append(gameName, accountBtn);
 //#endregion panel bar
 
 //#region content
@@ -33,72 +36,81 @@ const contentDiv = createElement("div", {
   className: "content-div",
 });
 
-const playBtn = createElement("button", {
-  id: "daily-puzzle-btn",
-  className: "action-btn",
-}, [
-  createElement("i", { className: "ph-fill ph-play" }),
-  createElement("p", { textContent: "Play" }),
-]);
+const playBtn = createElement(
+  "button",
+  {
+    id: "daily-puzzle-btn",
+    className: "action-btn",
+  },
+  [
+    createElement("i", { className: "ph-fill ph-play" }),
+    createElement("p", { textContent: "Play" }),
+  ],
+);
 playBtn.addEventListener("click", fetchPuzzle);
 
-type DosukuData = { newboard: {
-  grids: {
-    value: number[][],
-    solution: number[][],
-    difficulty: string,
-  }[],
-  result: number,
-  message: string,
-}}
+export let puzzleFetchController = new AbortController();
 
 async function fetchPuzzle() {
-  
-  document.dispatchEvent( new Event("prepare-board") );
-  
+  puzzleFetchController.abort();
+
+  puzzleFetchController = new AbortController();
+  document.dispatchEvent(new Event("prepare-board"));
+
   try {
-    const response = await fetch("https://sudoku-api.vercel.app/api/dosuku");
+    const response = await fetch(dosukuApi, {
+      signal: puzzleFetchController.signal,
+    });
     const data: DosukuData = await response.json();
-    
+
     const source = data.newboard.grids[0];
     if (!source) {
-      document.dispatchEvent( new CustomEvent("show-board-error") );
+      document.dispatchEvent(new CustomEvent("show-board-error"));
       return;
     }
-    
+
     const sourcePuzzle = source.value.flat().join("");
-    
+
     window.location.hash = `#playing&puzzle=${sourcePuzzle}&difficulty=${source.difficulty}`;
-  } catch {
-    document.dispatchEvent( new CustomEvent("show-board-error") );
+  } catch (er: any) {
+    if (er.name == "AbortError") return;
+    document.dispatchEvent(new CustomEvent("show-board-error"));
   }
 }
 
 document.addEventListener("retry-board-api", fetchPuzzle);
 
-const customBtn = createElement("button", {
-  id: "custom-btn",
-  className: "action-btn",
-}, [
-  createElement("i", { className: "ph-fill ph-note-pencil" }),
-  createElement("p", { textContent: "Custom" }),
-]);
+const customBtn = createElement(
+  "button",
+  {
+    id: "custom-btn",
+    className: "action-btn",
+  },
+  [
+    createElement("i", { className: "ph-fill ph-note-pencil" }),
+    createElement("p", { textContent: "Custom" }),
+  ],
+);
 customBtn.addEventListener("click", () => {
   window.location.hash = "#custom";
 });
 
-const settingsBtn = createElement("button", {
-  id: "settings-btn",
-  className: "action-btn",
-}, [
-  createElement("i", { className: "ph-fill ph-gear" }),
-  createElement("p", { textContent: "Settings" }),
-]);
+const settingsBtn = createElement(
+  "button",
+  {
+    id: "settings-btn",
+    className: "action-btn",
+  },
+  [
+    createElement("i", { className: "ph-fill ph-gear" }),
+    createElement("p", { textContent: "Settings" }),
+  ],
+);
 settingsBtn.addEventListener("click", () => {
   window.location.hash = "#settings";
 });
 
-contentDiv.append( playBtn, customBtn );
+contentDiv.append(playBtn, customBtn);
 //#endregion content
 
-homePanel.append( panelBar, contentDiv );
+homePanel.append(panelBar, contentDiv);

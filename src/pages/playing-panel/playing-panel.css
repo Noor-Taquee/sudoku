@@ -1,4 +1,3 @@
-
 .timer-div {
   display: flex;
   align-items: center;
@@ -10,7 +9,7 @@
     font: var(--secondary-header-font);
     font-weight: 700;
   }
-  
+
   i {
     color: var(--primary-text-color);
     font-size: var(--large-icon);
@@ -18,28 +17,46 @@
 }
 
 @keyframes move-gradient {
-  to { background-position: 0 0; }
+  to {
+    background-position: 0 0;
+  }
 }
 
 #board-container {
+  position: relative;
+
   max-height: 70vh;
   width: 90vw;
   aspect-ratio: 1 / 1;
+
   margin: 0 auto;
   border: 2px solid var(--primary-text-color);
 
-  /* background-image: 
-    linear-gradient(var(--secondary-bg) 2px, transparent 2px),
-    linear-gradient(90deg, var(--secondary-bg) 2px, transparent 2px);
-  background-size: 11.111% 11.111%; */
-  
-  
+  display: flex;
+
   &.loading {
-    background: linear-gradient(-45deg, transparent, var(--secondary-bg), transparent);
+    background: linear-gradient(
+      -45deg,
+      transparent,
+      var(--secondary-bg),
+      transparent
+    );
     background-size: 300% 300%;
     background-position: -200%;
     animation: move-gradient 1s linear infinite;
   }
+
+  &.load-error {
+    --primary-text-color: #cf5454;
+  }
+}
+
+.error-message {
+  height: fit-content;
+  width: fit-content;
+  margin: auto;
+  font: var(--secondary-header-font);
+  color: var(--primary-text-color);
 }
 
 .board {
@@ -51,23 +68,23 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   background-color: var(--primary-bg);
-  
+
   &.locked {
     touch-action: none;
     pointer-events: none;
     background: transparent;
-    
+
     .board-entry.read-only {
       background-color: var(--primary-text-color);
     }
   }
-  
+
   &.revealing-first-half {
     .board-entry.read-only {
       animation: flip-first-half 250ms linear;
     }
   }
-  
+
   &.revealing-second-half {
     .board-entry.read-only {
       animation: flip-second-half 250ms linear;
@@ -99,21 +116,21 @@
       color: var(--primary-text-color);
     }
   }
-  
+
   &.wrong {
     --primary-text-color: orange;
     &.focused {
       --primary-text-color: red;
     }
   }
-  
+
   &.impact {
     background-color: var(--absolute-bg);
   }
-  
-    &.focused {
-      background-color: var(--secondary-bg);
-    }
+
+  &.focused {
+    background-color: var(--secondary-bg);
+  }
 
   span {
     color: var(--absolute-color);
@@ -155,12 +172,12 @@
   height: var(--height);
   width: 100%;
   border: 0.5px solid var(--primary-text-color);
-  border-radius: calc(var(--height)/2);
+  border-radius: calc(var(--height) / 2);
 
   .progress-fill {
     height: 100%;
     width: var(--value);
-    border-radius: calc(var(--height)/2);
+    border-radius: calc(var(--height) / 2);
     background-color: var(--primary-text-color);
     transition: width 200ms ease;
   }
